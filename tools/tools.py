@@ -16,3 +16,4 @@ def get_profile_url_tavily(name: str) -> str:
     res= search.run(f"{name}")
     
     return res
+
