@@ -41,7 +41,13 @@ def scrape_twitter_profile_info(username:str, num_tweets:int=5, mock:bool=False)
             )
 
     if tweets is not None:
-        for tweet in tweets.data:
+        all_tweets = []
+        if mock:
+            all_tweets = tweets
+        else:
+            all_tweets = tweets.data
+        
+        for tweet in all_tweets:
             tweet_dict={}
             tweet_dict["text"] = tweet["text"]
             tweet_dict["url"]= f"https://twitter.com/{username}/status/{tweet['id']}"
@@ -65,7 +71,7 @@ def scrape_twitter_profile_info(username:str, num_tweets:int=5, mock:bool=False)
 if __name__=="__main__":
     # Test the function with a sample username
     username = "elonmusk"
-    tweets = scrape_twitter_profile_info(username=username, num_tweets=5, mock=False)
+    tweets = scrape_twitter_profile_info(username=username, num_tweets=5, mock=True)
     print(tweets)
     
     

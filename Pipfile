@@ -13,6 +13,7 @@ python-dotenv = "*"
 langchain-ollama = "*"
 setuptools = "*"
 tweepy = "*"
+flask = "*"
 
 [dev-packages]
 

@@ -6,20 +6,21 @@ from third_parties.linkedin import scrape_linkedin_profile_info
 from third_parties.twitter import scrape_twitter_profile_info
 from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
 from agents.twitter_lookup_agent import lookup as twitter_lookup_agent
+from output_parsers import summary_Parser, Summary
 
-import os
-from dotenv import load_dotenv,dotenv_values
+from dotenv import load_dotenv
+from typing import Tuple
 
 
-def ice_break_with(name:str) -> str:
+def ice_break_with(name:str) -> Tuple[Summary, str]:
     """
-    Get the LinkedIn profile URL of a person using the LinkedIn lookup agent.
+    Get the LinkedIn and Twitter data of a person using the  LinkedIn & Twitter lookup agents.
     
     Args:
         name (str): The full name of the person.
         
     Returns:
-        str: The LinkedIn profile URL of the person.
+        str: The LinkedIn profile & Twitter Data of the person.
     """
     print("Hello, Ice Breaker!")
     linkedin_profile_name = linkedin_lookup_agent(name=name)
@@ -27,7 +28,7 @@ def ice_break_with(name:str) -> str:
 
     # mock=True for tesing purposes and to avoid real time scraping and incur API costs
     linkedin_data= scrape_linkedin_profile_info(linkedin_profile_url=linkedin_profile_name, mock=True)
-    twitter_data= scrape_twitter_profile_info(username=twitter_name)
+    twitter_data= scrape_twitter_profile_info(username=twitter_name, mock=True)
 
     summary_template = """
     given the LinkedIn information {information} about a person and twitter posts {tweets}, I want you to crreate 
@@ -35,9 +36,14 @@ def ice_break_with(name:str) -> str:
     2. two interesting facts about the person
 
     Use the information from the LinkedIn profile and the tweets to create the summary and facts.
+    \n{format_instructions}
     """
 
-    summary_prompt = PromptTemplate(input_variables=["information", "tweets"], template=summary_template)
+    summary_prompt = PromptTemplate(
+        input_variables=["information", "tweets"], 
+        template=summary_template,
+        partial_variables={"format_instructions": summary_Parser.get_format_instructions()})
+    
     llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0) # instantiate OpenAI LLM
     
     
@@ -45,11 +51,15 @@ def ice_break_with(name:str) -> str:
     # llm= ChatOllama(model="mistral", temperature=0) # instantiate Mistral LLM
     
     
-    chain = summary_prompt | llm | StrOutputParser()
+    # chain = summary_prompt | llm | StrOutputParser()
+    chain= summary_prompt | llm | summary_Parser
 
-    res= chain.invoke(input={"information": linkedin_data, "tweets": twitter_data})
-    
+    res:Summary= chain.invoke(input={"information": linkedin_data, "tweets": twitter_data})
     print(res)
+    
+    return res,linkedin_data.get("profile_photo")
+    
+    
 
 
 if __name__=="__main__":
