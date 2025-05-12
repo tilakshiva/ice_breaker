@@ -14,7 +14,7 @@ load_dotenv()
 
 def lookup(name:str) -> str:
     llm = ChatOpenAI(
-        model="gpt-4o-mini",
+        model="gpt-3.5-turbo",
         temperature=0,
         openai_api_key=os.getenv("OPENAI_API_KEY"),
     )

@@ -4,8 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-langchain = "*"
-langchain-openai = "*"
 langchain-community = "*"
 langchainhub = "*"
 black = "*"
@@ -14,6 +12,8 @@ langchain-ollama = "*"
 setuptools = "*"
 tweepy = "*"
 flask = "*"
+langchain = "*"
+langchain-openai = "*"
 
 [dev-packages]
 

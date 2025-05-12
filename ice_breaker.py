@@ -11,7 +11,9 @@ from output_parsers import summary_Parser, Summary
 from dotenv import load_dotenv
 from typing import Tuple
 
+from langsmith import traceable
 
+@traceable
 def ice_break_with(name:str) -> Tuple[Summary, str]:
     """
     Get the LinkedIn and Twitter data of a person using the  LinkedIn & Twitter lookup agents.
