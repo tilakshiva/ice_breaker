@@ -131,3 +131,6 @@ dmypy.json
 
 # Environments
  .env
+
+
+.DS_store
